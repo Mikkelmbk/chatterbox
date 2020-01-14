@@ -32,6 +32,7 @@ body {
 .mainChatView__other {
 	border-radius: 8px;
 	padding: .4em 1em;
+	margin-top:0;
 }
 
 .mainChatView__me {
@@ -48,28 +49,66 @@ body {
 
 .mainChatView__name {
 	display: block;
-	font-size: 50%;
+	font-size: 60%;
 }
 
-.chatMessage {
+.chatMessage__form {
 	display: flex;
 	align-items: center;
 }
 
 .chatMessage__input,
-.chatMessage__button {
+.chatMessage__button,
+.chatMessage__username,
+.chatMessage__join {
 	font-family: inherit;
 	font-size: inherit;
 	padding: .3em .7em;
 }
 
-.chatMessage__input {
+.chatMessage__input,
+.chatMessage__username {
 	flex: 4;
 }
 
-.chatMessage__button {
+.chatMessage__button,
+.chatMessage__join {
 	flex: 1;
 	background-color: hsl(120, 50%, 30%);
 	color: hsl(0, 0%, 96%);
 	border: none;
+}
+
+.emoticons{
+	height:1.3em;
+	width:auto;
+}
+
+.timestamp{
+	opacity:0.7;
+	margin:0;
+	padding:0;
+	display:block;
+
+}
+
+.timestamp.right{
+	text-align:right;
+}
+
+.timestamp.left{
+	text-align:left;
+}
+
+.timestamp.center{
+	text-align:center;
+}
+
+.hidden{
+	display:none;
+	visibility: hidden;
+	width:1px;
+	height:1px;
+	pointer-events: none;
+
 }
