@@ -15,7 +15,7 @@ chatForm.addEventListener('submit', (e) => {
 
 loginForm.addEventListener('submit', (e) => {
 	e.preventDefault();
-	if (username.value == "") {
+	if (username.value == "" && !chatInput.value.match(regex)) {
 		return;
 	}
 	user = username.value;

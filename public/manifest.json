@@ -1,6 +1,6 @@
 {
-	"name": "Catterbox",
-	"short_name": "Catter",
+	"name": "Chatterbox",
+	"short_name": "Chatterbox",
 	"icons": [{
 	  "src": "/assets/images/catter128x128.png",
 		"sizes": "128x128",
