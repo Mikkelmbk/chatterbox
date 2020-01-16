@@ -9,20 +9,19 @@ let user;
 let chatForm = document.querySelectorAll('.chatMessage__form')[0];
 let loginForm = document.querySelectorAll('.chatMessage__form')[1];
 let regex = /<[a-zA-Z0-9].*>[a-zA-Z0-9].*<\/[a-zA-Z0-9].*>/i;
-// let windowFocus = true;
+
 
 Notification.requestPermission(function (status) {
 	console.log('Notification permission status:', status);
 });
 
 
-// function checkFocus(){
-// 	if(document.visibilityState == "hidden"){
-// 		return "hidden";
-// 	}
-// }
 
 // https://developer.mozilla.org/en-US/docs/Web/API/Document/visibilityState
+
+// https://stackoverflow.com/questions/11498508/socket-emit-vs-socket-send socket.send vs socket.emit
+
+// https://developers.google.com/web/ilt/pwa/introduction-to-push-notifications Push notification documentation
 
 function displayNotification(msg) {
 	if (document.visibilityState == "hidden") {
@@ -31,15 +30,21 @@ function displayNotification(msg) {
 			if (Notification.permission == 'granted') {
 				navigator.serviceWorker.getRegistration().then(function (reg) {
 					var options = {
-						body: `${msg.username}: ${msg.msg}`,
+						body: msg,
 						icon: '/assets/images/CropCena.png',
 						vibrate: [100, 50, 100],
 						data: {
 							dateOfArrival: Date.now(),
 							primaryKey: 1
-						}
+						},
+						actions: [
+							{action: 'explore', title: 'Explore this new world',
+							  icon: 'images/checkmark.png'},
+							{action: 'close', title: 'Close notification',
+							  icon: 'images/xmark.png'},
+						  ]
 					};
-					reg.showNotification("", options);
+					reg.showNotification("Chatterbox", options);
 				});
 			}
 		}
@@ -80,7 +85,6 @@ function sendChatMessage() { // You sending a message.
 		chatInput.value = chatInput.value.replace("(-:", "<img class='emoticons' src='/assets/images/Smile.png'>");
 		chatInput.value = chatInput.value.replace(":-)", "<img class='emoticons' src='/assets/images/Smile.png'>");
 
-		// socket.send(chatInput.value);
 		let time = Date.now();
 
 		socket.send({ msg: chatInput.value, timestamp: time, username: user });
@@ -125,7 +129,7 @@ socket.on('message', (msg) => { // Others sending a message.
 		scrollToBottom();
 		audio.play();
 			// setTimeout(()=>{ // setTimeout for testing purposes
-		displayNotification(msg);
+		displayNotification(`${msg.username}: ${msg.msg}`);
 			// },2000)
 	}
 
@@ -137,6 +141,9 @@ function scrollToBottom() {
 
 
 socket.on('userjoin', function (msg) {
+	if (document.visibilityState == "hidden") {
+		displayNotification(`${msg} has joined the chat`);
+	}
 	let small = document.createElement('small');
 	small.className = "timestamp center";
 	small.innerText = `${msg} has joined the chat`;
