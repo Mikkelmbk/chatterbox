@@ -17,36 +17,45 @@ Notification.requestPermission(function (status) {
 
 
 
+
+console.log("Test", navigator);
+
 // https://developer.mozilla.org/en-US/docs/Web/API/Document/visibilityState
 
 // https://stackoverflow.com/questions/11498508/socket-emit-vs-socket-send socket.send vs socket.emit
 
 // https://developers.google.com/web/ilt/pwa/introduction-to-push-notifications Push notification documentation
 
-function displayNotification(msg) {
-	if (document.visibilityState == "hidden") {
-		if ("serviceWorker" in navigator) {
+console.log("This returns false or true if the object contains the method: ", 'serviceWorker' in navigator); // true;
+console.log("This returns false or true if the object contains the method: ", 'addEventListener' in window); // true;
+console.log("This returns false or true if the object contains the method: ", 'querySelector' in document); // true;
+console.log("This returns false or true if the object contains the method: ", 'BLABLABLA' in document); // false;
 
-			if (Notification.permission == 'granted') {
-				navigator.serviceWorker.getRegistration().then(function (reg) {
-					var options = {
-						body: msg,
-						icon: '/assets/images/CropCena.png',
-						vibrate: [100, 50, 100],
-						data: {
-							dateOfArrival: Date.now(),
-							primaryKey: 1
+function displayNotification(msg) {
+	if (document.visibilityState == "hidden" && 'Notification' in window && navigator.serviceWorker) {
+		if (Notification.permission == 'granted') {
+			navigator.serviceWorker.getRegistration().then(function (reg) {
+				var options = {
+					body: msg,
+					icon: '/assets/images/CropCena.png',
+					vibrate: [100, 50, 100],
+					data: {
+						dateOfArrival: Date.now(),
+						primaryKey: 1
+					},
+					actions: [
+						{
+							action: 'explore', title: 'Explore this new world',
+							icon: 'images/checkmark.png'
 						},
-						actions: [
-							{action: 'explore', title: 'Explore this new world',
-							  icon: 'images/checkmark.png'},
-							{action: 'close', title: 'Close notification',
-							  icon: 'images/xmark.png'},
-						  ]
-					};
-					reg.showNotification("Chatterbox", options);
-				});
-			}
+						{
+							action: 'close', title: 'Close notification',
+							icon: 'images/xmark.png'
+						},
+					]
+				};
+				reg.showNotification("Chatterbox", options);
+			});
 		}
 	}
 }
@@ -128,9 +137,7 @@ socket.on('message', (msg) => { // Others sending a message.
 		chatContainer.appendChild(p); // append P element to chat container.
 		scrollToBottom();
 		audio.play();
-			// setTimeout(()=>{ // setTimeout for testing purposes
 		displayNotification(`${msg.username}: ${msg.msg}`);
-			// },2000)
 	}
 
 });
@@ -141,9 +148,7 @@ function scrollToBottom() {
 
 
 socket.on('userjoin', function (msg) {
-	if (document.visibilityState == "hidden") {
-		displayNotification(`${msg} has joined the chat`);
-	}
+	displayNotification(`${msg} has joined the chat`);
 	let small = document.createElement('small');
 	small.className = "timestamp center";
 	small.innerText = `${msg} has joined the chat`;
