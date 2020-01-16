@@ -9,6 +9,44 @@ let user;
 let chatForm = document.querySelectorAll('.chatMessage__form')[0];
 let loginForm = document.querySelectorAll('.chatMessage__form')[1];
 let regex = /<[a-zA-Z0-9].*>[a-zA-Z0-9].*<\/[a-zA-Z0-9].*>/i;
+// let windowFocus = true;
+
+Notification.requestPermission(function (status) {
+	console.log('Notification permission status:', status);
+});
+
+
+// function checkFocus(){
+// 	if(document.visibilityState == "hidden"){
+// 		return "hidden";
+// 	}
+// }
+
+// https://developer.mozilla.org/en-US/docs/Web/API/Document/visibilityState
+
+function displayNotification(msg) {
+	if (document.visibilityState == "hidden") {
+		if ("serviceWorker" in navigator) {
+
+			if (Notification.permission == 'granted') {
+				navigator.serviceWorker.getRegistration().then(function (reg) {
+					var options = {
+						body: `${msg.username}: ${msg.msg}`,
+						icon: '/assets/images/CropCena.png',
+						vibrate: [100, 50, 100],
+						data: {
+							dateOfArrival: Date.now(),
+							primaryKey: 1
+						}
+					};
+					reg.showNotification("", options);
+				});
+			}
+		}
+	}
+}
+
+
 chatForm.addEventListener('submit', (e) => {
 	e.preventDefault();
 });
@@ -60,7 +98,7 @@ function sendChatMessage() { // You sending a message.
 		scrollToBottom();
 		audio.play();
 	}
-	else{
+	else {
 		console.log("Du kan ikke skrive html elementer i chatten");
 	}
 }
@@ -70,12 +108,12 @@ socket.on('message', (msg) => { // Others sending a message.
 	if (msg != "") {
 		let p = document.createElement('p'); // Create P element.
 		p.className = "mainChatView__other"; // apply class to P element.
-		
+
 		let span = document.createElement('span');
 		span.innerHTML = msg.username;
 		span.className = "mainChatView__name";
 		p.appendChild(span);
-		
+
 		p.innerHTML += msg.msg;
 		let small = document.createElement('small');
 		small.className = "timestamp left";
@@ -86,6 +124,9 @@ socket.on('message', (msg) => { // Others sending a message.
 		chatContainer.appendChild(p); // append P element to chat container.
 		scrollToBottom();
 		audio.play();
+			// setTimeout(()=>{ // setTimeout for testing purposes
+		displayNotification(msg);
+			// },2000)
 	}
 
 });
